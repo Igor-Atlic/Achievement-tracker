@@ -15,6 +15,14 @@ module.exports = {
       category: {
         type: DataTypes.STRING
       },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      achievementId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE

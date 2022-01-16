@@ -1,4 +1,4 @@
-const { sequelize, Users, Comment,Game, Achievement } = require('../models');
+const { sequelize, Users, Comment,Game, Achievement,User_Achievement } = require('../models');
 const express = require('express');
 
 const route = express.Router();
@@ -15,7 +15,7 @@ route.get('/users', (req, res) => {
 
 route.get('/user/:id', (req, res) => {
 
-    Users.findOne({ where: { id: req.params.id }, include:Achievement })
+    Users.findOne({ where: { id: req.params.id } })
         .then( rows => res.json(rows) )
         .catch( err => res.status(500).json(err) );
 
@@ -66,7 +66,7 @@ route.get('/achievements', (req, res) => {
 
 route.get('/achievement/:id', (req, res) => {
 
-    Achievement.findOne({ where: { id: req.params.id } , include: [Users,'game']})
+    Achievement.findOne({ where: { id: req.params.id } , include: ['game']})
         .then( rows => res.json(rows) )
         .catch( err => res.status(500).json(err) );
 
@@ -195,9 +195,58 @@ route.put('/comment/:id', (req, res) => {
 
 route.delete('/comment/:id', (req, res) => {
 
-    Comment.findOne({ where: { id: req.params.id } ,include:['user', 'achievement']})
+    Comment.findOne({ where: { id: req.params.id } ,include:[ 'users', 'achievement']})
         .then( com => {
             com.destroy()
+                .then( rows => res.json(rows) )
+                .catch( err => res.status(500).json(err) );
+        })
+        .catch( err => res.status(500).json(err) );
+});
+
+route.get('/users_achievements', (req, res) => {
+
+    User_Achievement.findAll({include:[ Users, Achievement]})
+        .then( rows => res.json(rows) )
+        .catch( err => res.status(500).json(err) );
+    
+});
+
+route.get('/user_achievement/:id', (req, res) => {
+
+    User_Achievement.findOne({ where: { id: req.params.id }, include:[ Users, Achievement] })
+        .then( rows => res.json(rows) )
+        .catch( err => res.status(500).json(err) );
+
+});
+
+route.post('/user_achievement', (req, res) => {
+    
+    User_Achievement.create({ userId: req.body.userId, achievementId: req.body.achievementId })
+        .then( rows => res.json(rows) )
+        .catch( err => res.status(500).json(err) );
+
+});
+
+route.put('/user_achievement/:id', (req, res) => {
+    
+    User_Achievement.findOne({ where: { id: req.params.id } })
+        .then( usr => {
+            usr.userId = req.body.userId;
+            usr.achievementId = req.body.achievementId;
+            usr.save()
+                .then( rows => res.json(rows) )
+                .catch( err => res.status(500).json(err) );
+        })
+        .catch( err => res.status(500).json(err) );
+
+});
+
+route.delete('/user_achievement/:id', (req, res) => {
+
+    User_Achievement.findOne({ where: { id: req.params.id } })
+        .then( usr => {
+            usr.destroy()
                 .then( rows => res.json(rows) )
                 .catch( err => res.status(500).json(err) );
         })

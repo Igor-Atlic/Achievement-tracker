@@ -1,42 +1,42 @@
 function init() {
     
-    fetch('localhost:8000/api/users')
+    fetch('http://192.168.1.23:8000/api/users')
         .then( res => res.json() )
         .then( data => {
-            const lst = document.getElementById('usrLst');
+            const lst = document.getElementById('userLst');
 
             data.forEach( el => {
                 lst.innerHTML += `<li>ID: ${el.id}, Username: ${el.username}, E-mail: ${el.email}, Password: ${el.password}, Permission: ${el.permission}</li>`;
             });
         });
 
-    fetch('http://192.168.0.143:8000/api/games')
+    fetch('http://192.168.1.23:8000/api/games')
         .then( res => res.json() )
         .then( data => {
-            const lst = document.getElementById('gameLst');
+            const lst = document.getElementById('gameList');
 
             data.forEach( el => {
-                lst.innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Developer: ${el.user.name}</li>`;
+                lst.innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Developer: ${el.developer.username}</li>`;
             });
         });
 
-    fetch('http://192.168.0.143:8000/api/achievements')
+    fetch('http://192.168.1.23:8000/api/achievements')
     .then( res => res.json() )
     .then( data => {
-        const lst = document.getElementById('achievementLst');
+        const lst = document.getElementById('achievementList');
 
         data.forEach( el => {
-            lst.innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Game ID: ${el.game.id}</li>, Text: ${el.text}</li>, Finished: ${el.finished} `;
+            lst.innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Game ID: ${el.game.name}</li>, Text: ${el.text}</li>, Finished: ${el.finished} `;
         });
     });
 
-    fetch('http://192.168.0.143:8000/api/comments')
+    fetch('http://192.168.1.23:8000/api/comments')
     .then( res => res.json() )
     .then( data => {
-        const lst = document.getElementById('commentLst');
+        const lst = document.getElementById('commentList');
 
         data.forEach( el => {
-            lst.innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, User ID: ${el.user.id}</li>, Achievement ID: ${el.achievement.id}</li>,Text: ${el.text}</li>, Category: ${el.category} `;
+            lst.innerHTML += `<li>ID: ${el.id}, Name: ${el.user.username}, User ID: ${el.user.id}</li>, Achievement ID: ${el.achievement.id}</li>,Text: ${el.text}</li>, Category: ${el.category} `;
         });
     });
     document.getElementById('userBtn').addEventListener('click', e => {
@@ -54,14 +54,14 @@ function init() {
         document.getElementById('password').value = '',
         document.getElementById('permission').value = ''
 
-        fetch('localhost:8000/api/user', {
+        fetch('http://192.168.1.23:8000/api/user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
             .then( res => res.json() )
             .then( el => {
-                document.getElementById('usrLst').innerHTML += `<li>ID: ${el.id}, Username: ${el.username}, E-mail: ${el.email}, Password: ${el.password}, Permission: ${el.permission}</li>`;
+                document.getElementById('userLst').innerHTML += `<li>ID: ${el.id}, Username: ${el.username}, E-mail: ${el.email}, Password: ${el.password}, Permission: ${el.permission}</li>`;
             });
     });
 
@@ -76,14 +76,14 @@ function init() {
         document.getElementById('nameG').value = '';
         document.getElementById('userIdG').value = '';
 
-        fetch('http://192.168.0.143:8000/api/message', {
+        fetch('http://192.168.1.23:8000/api/game', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
             .then( res => res.json() )
             .then( el => {
-                document.getElementById('msgLst').innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Developer: ${el.user.name}</li>`;
+                document.getElementById('gameList').innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Developer Id: ${el.userId}</li>`;
             });
     });
 
@@ -102,14 +102,14 @@ function init() {
         document.getElementById('textA').value = '',
         document.getElementById('finished').value = ''
 
-        fetch('http://192.168.0.143:8000/api/achievement', {
+        fetch('http://192.168.1.23:8000/api/achievement', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
             .then( res => res.json() )
             .then( el => {
-                document.getElementById('msgLst').innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Game ID: ${el.game.id}</li>, Text: ${el.text}</li>, Finished: ${el.finished} `;
+                document.getElementById('achievementList').innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, Game ID: ${el.game.id}</li>, Text: ${el.text}</li>, Finished: ${el.finished} `;
             });
     });
 
@@ -128,14 +128,14 @@ function init() {
         document.getElementById('textC').value = '';
         document.getElementById('categoryC').value = '';
 
-        fetch('http://192.168.0.143:8000/api/comment', {
+        fetch('http://192.168.1.23:8000/api/comment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
             .then( res => res.json() )
             .then( el => {
-                document.getElementById('msgLst').innerHTML += `<li>ID: ${el.id}, Name: ${el.name}, User ID: ${el.user.id}</li>, Achievement ID: ${el.achievement.id}</li>,Text: ${el.text}</li>, Category: ${el.category} `;
+                document.getElementById('commentList').innerHTML += `<li>ID: ${el.id}, User ID: ${el.userId}</li>, Achievement ID: ${el.achievementId}</li>,Text: ${el.text}</li>, Category: ${el.category} `;
             });
     });
 }

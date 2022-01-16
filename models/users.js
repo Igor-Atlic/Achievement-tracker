@@ -46,7 +46,6 @@ module.exports = (sequelize, DataTypes) => {
         isAlphanumeric:{
           msg: "Password dozvoljava samo slova i brojeve"
         },
-        max:24,
         min:4
       }
     },
