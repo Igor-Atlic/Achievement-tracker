@@ -20,10 +20,6 @@ module.exports = {
         type: DataTypes.STRING(2048),
         allowNull: false
       },
-      finished: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-      },
       gameId: {
         type: DataTypes.INTEGER,
         allowNull: false

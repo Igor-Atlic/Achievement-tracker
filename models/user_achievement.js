@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
     achievementId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    finished: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
     }
   }, {
     sequelize,

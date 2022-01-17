@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate({Achievement,Comment,Game}) {
       // define association here
-      this.belongsToMany(Achievement, { through:'User_Achievement',as: "achievements", foreignKey: "userId", onDelete: 'cascade', hooks: true});
+      this.belongsToMany(Achievement, { through:'User_Achievement',as: "achievements"});
       this.hasMany(Comment, { foreignKey: 'userId', as: 'comments'});
       this.hasMany(Game, { foreignKey: 'userId', as: 'games', onDelete: 'cascade', hooks: true});
     }
@@ -43,9 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate:{
-        isAlphanumeric:{
-          msg: "Password dozvoljava samo slova i brojeve"
-        },
         min:4
       }
     },
@@ -53,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.STRING,
       validate:{
         isIn: {
-          args: [['admin', 'developer', 'user']],
+          args: [['admin', 'dev', 'user']],
           msg: "Nije dat dobar permission"
         }
       }
