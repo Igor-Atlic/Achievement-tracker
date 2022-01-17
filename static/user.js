@@ -65,7 +65,11 @@ function init() {
     });
 
     
-
+    document.getElementById('users_achievementsBtn').addEventListener('click', e => {
+        e.preventDefault();
+        
+        window.location.href = 'users_achievements.html';
+    });
     document.getElementById('gameBtn').addEventListener('click', e => {
         e.preventDefault();
         

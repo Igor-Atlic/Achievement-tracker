@@ -29,7 +29,6 @@ function init() {
         data.forEach( el => {
             table.innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.userId}</div></td><td><div contenteditable>${el.achievementId}</div></td>
                 <td><div contenteditable>${el.text}</div></td><td><div contenteditable>${el.category}</div></td><td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr>`;
-            //lst.innerHTML += `<li>ID: ${el.id}, Name: ${el.user.username}, User ID: ${el.user.id}</li>, Achievement ID: ${el.achievement.id}</li>,Text: ${el.text}</li>, Category: ${el.category} `;
         });
     });
 
@@ -58,10 +57,16 @@ function init() {
         })
             .then( res => res.json() )
             .then( el => {
-                document.getElementById('categoryTable').innerHTML += `<li>ID: ${el.id}, User ID: ${el.userId}</li>, Achievement ID: ${el.achievementId}</li>,Text: ${el.text}</li>, Category: ${el.category} `;
+                document.getElementById('categoryTable').innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.userId}</div></td><td><div contenteditable>${el.achievementId}</div></td>
+                <td><div contenteditable>${el.text}</div></td><td><div contenteditable>${el.category}</div></td><td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr> `;
             });}
     });
 
+    document.getElementById('users_achievementsBtn').addEventListener('click', e => {
+        e.preventDefault();
+        
+        window.location.href = 'users_achievements.html';
+    });
     document.getElementById('userBtn').addEventListener('click', e => {
         e.preventDefault();
 
@@ -113,8 +118,8 @@ function editRow(element){
     
     var id = element.closest('tr').cells[0].innerText;
     const data = {
-        userId: element.closest('tr').cells[1].innerText,
-        achievementId: element.closest('tr').cells[2].innerText,
+        userId: element.closest('tr').cells[1].innerText.trim(),
+        achievementId: element.closest('tr').cells[2].innerText.trim(),
         text: element.closest('tr').cells[3].innerText,
         category:element.closest('tr').cells[4].innerText
     };

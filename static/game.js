@@ -27,7 +27,7 @@ function init() {
             const table = document.getElementById('gameTable');
 
             data.forEach( el => {
-                table.innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.name}</div></td><td><div contenteditable>${el.userId}</div><td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr>`;
+                table.innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.userId}</div></td><td><div contenteditable>${el.name}</div><td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr>`;
             });
         });
 
@@ -51,7 +51,7 @@ function init() {
         })
             .then( res => res.json() )
             .then( el => {
-                document.getElementById('gameTable').innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.name}</div></td><td><div contenteditable>${el.userId}</div><td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr>`;
+                document.getElementById('gameTable').innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.userId}</div></td><td><div contenteditable>${el.name}</div><td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr>`;
             });}
     });
 
@@ -62,7 +62,11 @@ function init() {
         window.location.href = 'user.html';
     });
 
-   
+    document.getElementById('users_achievementsBtn').addEventListener('click', e => {
+        e.preventDefault();
+        
+        window.location.href = 'users_achievements.html';
+    });
 
     document.getElementById('achievementBtn').addEventListener('click', e => {
         e.preventDefault();
@@ -108,7 +112,7 @@ function editRow(element){
     
     var id = element.closest('tr').cells[0].innerText;
     const data = {
-        userId: element.closest('tr').cells[1].innerText,
+        userId: element.closest('tr').cells[1].innerText.trim(),
         name: element.closest('tr').cells[2].innerText,
         
     };

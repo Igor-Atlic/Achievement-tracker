@@ -1,7 +1,6 @@
 const cookies = document.cookie.split('=');
 const token = cookies[cookies.length - 1];
 
-
 function init() {
     
     
@@ -19,68 +18,68 @@ function init() {
             
         });
 
-
-    fetch('http://192.168.1.23:8000/admin/achievements',{
+    fetch('http://192.168.1.23:8000/admin/users_achievements',{
         headers: {
-        'Authorization': `Bearer ${token}`
-    }})
-    .then( res => res.json() )
-    .then( data => {
-        const table = document.getElementById('achTable');
+            'Authorization': `Bearer ${token}`
+        }
+    })
+        .then( res => res.json() )
+        .then( data => {
+            const table = document.getElementById('userTable');
 
-        data.forEach( el => {
-            table.innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.name}</div></td><td><div contenteditable>${el.gameId}</div></td><td><div contenteditable>${el.text}</div></td>
+            data.forEach( el => {
+                table.innerHTML += `<td>${el.userId}</td><td>${el.achievementId}</td><td><div contenteditable>${el.finished}</div></td>
                 <td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr>`;
+            });
         });
-    });
 
 
-    document.getElementById('achievementBtn').addEventListener('click', e => {
+    
+    document.getElementById('user_achievementBtn').addEventListener('click', e => {
         e.preventDefault();
-        
+
         const data = {
-            name: document.getElementById('nameA').value,
-            gameId: document.getElementById('gameIdA').value,
-            text:document.getElementById('textA').value
-            
+            userId: document.getElementById('userId').value,
+            achievementId: document.getElementById('achievementId').value,
+            finished: document.getElementById('finished').checked,
         };
         if(validateForm(data)){
+        document.getElementById('userId').value = '',
+        document.getElementById('achievementId').value = '',
+        document.getElementById('finished').checked = 'false'
+        
 
-        document.getElementById('nameA').value = '';
-        document.getElementById('gameIdA').value = '';
-        document.getElementById('textA').value = ''
-
-        fetch('http://192.168.1.23:8000/admin/achievement', {
+        fetch('http://192.168.1.23:8000/admin/user_achievement', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' ,
-            'Authorization': `Bearer ${token}`},
+            headers: { 'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` },
             body: JSON.stringify(data)
         })
             .then( res => res.json() )
             .then( el => {
-                document.getElementById('achTable').innerHTML += `<tr><td>${el.id}</td><td><div contenteditable>${el.name}</div></td><td><div contenteditable>${el.gameId}</div></td><td><div contenteditable>${el.text}</div></td>
+                document.getElementById('userTable').innerHTML += `<td>${el.userId}</td><td>${el.achievementId}</td><td><div contenteditable>${el.finished}</div></td>
                 <td><button class="btn btn-primary" onclick ="editRow(this)" >edit</button></td><td><button class="btn btn-danger" onclick ="deleteRow(this)" >delete</button></td></tr>`;
             });}
     });
 
-    document.getElementById('users_achievementsBtn').addEventListener('click', e => {
-        e.preventDefault();
-        
-        window.location.href = 'users_achievements.html';
-    });
+    
     document.getElementById('userBtn').addEventListener('click', e => {
         e.preventDefault();
-
+        
         window.location.href = 'user.html';
     });
-
+    
     document.getElementById('gameBtn').addEventListener('click', e => {
         e.preventDefault();
         
         window.location.href = 'game.html';
     });
 
-    
+    document.getElementById('achievementBtn').addEventListener('click', e => {
+        e.preventDefault();
+        
+        window.location.href = 'achievement.html';
+    });
 
     document.getElementById('commentBtn').addEventListener('click', e => {
         e.preventDefault();
@@ -97,11 +96,13 @@ function init() {
 function deleteRow(element){
 
 
-    var id = element.closest('tr').cells[0].innerText;
+    var userId = element.closest('tr').cells[0].innerText;
+    var achievementId = element.closest('tr').cells[1].innerText;
+
     console.log(element.closest('tr'))
     element.closest('tr').remove();
 
-    fetch('http://192.168.1.23:8000/admin/achievement/' + id,{
+    fetch('http://192.168.1.23:8000/admin/user_achievement/' + userId + '/'+ achievementId,{
         headers: {
             'Authorization': `Bearer ${token}`
         },
@@ -118,15 +119,17 @@ function deleteRow(element){
 
 function editRow(element){
     
-    var id = element.closest('tr').cells[0].innerText;
+    var userId = element.closest('tr').cells[0].innerText;
+    var achievementId = element.closest('tr').cells[1].innerText;
     const data = {
-        name: element.closest('tr').cells[1].innerText,
-        gameId: element.closest('tr').cells[2].innerText.trim(),
-        text: element.closest('tr').cells[3].innerText,
+        userId: element.closest('tr').cells[0].innerText.trim(),
+        achievementId: element.closest('tr').cells[1].innerText.trim(),
+        finished: element.closest('tr').cells[2].innerText,
+        
     };
 
     if(validateForm(data)){
-    fetch('http://192.168.1.23:8000/admin/achievement/' + id, {
+    fetch('http://192.168.1.23:8000/admin/user_achievement/'  + userId + '/'+ achievementId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}` },
@@ -141,16 +144,12 @@ function editRow(element){
 
 function validateForm(data) {
     
-    if (data.name.trim() == "") {
-        alert("Name must be filled out");
+    if (data.userId.trim() == "") {
+        alert("UserId must be filled out");
         return false;
-    }else if(data.text.trim() == ""){
-        alert("Text must be filled out");
+    }else if(data.achievementId.trim() == ""){
+        alert("AchievementId must be filled out");
         return false;
-    }else if(data.gameId.trim() == ""){
-        alert("gameId must be filled out");
-        return false;
-
     }
     return true
   } 

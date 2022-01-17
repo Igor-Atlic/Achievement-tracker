@@ -12,11 +12,17 @@ function init() {
         .then( res => res.json() )
         .then( data => {
             const lst = document.getElementById('currentUser').innerHTML = `Username ${data.username}`;
-
+            if(data.permission != "admin"){
+                document.getElementById('admin').innerHTML = `You dont have permission to use this features`;
+            }
             
         });
 
-    
+        document.getElementById('users_achievementsBtn').addEventListener('click', e => {
+            e.preventDefault();
+            
+            window.location.href = 'users_achievements.html';
+        });
     document.getElementById('userBtn').addEventListener('click', e => {
         e.preventDefault();
 

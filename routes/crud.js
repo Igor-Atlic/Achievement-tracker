@@ -173,6 +173,7 @@ route.put('/achievement/:id', (req, res) => {
             ach.name = req.body.name;
             ach.text = req.body.text;
             ach.finished = req.body.finished;
+            ach.gameId = req.body.gameId
             ach.save()
                 .then( rows => res.json(rows) )
                 .catch( err => res.status(500).json(err) );
@@ -250,6 +251,7 @@ route.put('/game/:id', (req, res) => {
             if (usr.permission === "admin") {
     Game.findOne({ where: { id: req.params.id } ,include:['developer']})
         .then( game => {
+            game.userId = req.body.userId;
             game.name = req.body.name;
             game.save()
                 .then( rows => res.json(rows) )
@@ -330,7 +332,8 @@ route.put('/comment/:id', (req, res) => {
         .then( com => {
             com.text = req.body.text;
             com.category = req.body.category;
-            
+            com.userId = req.body.userId;
+            com.achievementId = req.body.achievementId;
             com.save()
                 .then( rows => res.json(rows) )
                 .catch( err => res.status(500).json(err) );
@@ -364,7 +367,7 @@ route.get('/users_achievements', (req, res) => {
     Users.findOne({ where: { id: req.user.userId } })
     .then( usr => {
         if (usr.permission === "admin") {
-    User_Achievement.findAll({include:[ Users, Achievement]})
+    User_Achievement.findAll()
         .then( rows => res.json(rows) )
         .catch( err => res.status(500).json(err) );} else {
             res.status(403).json({ msg: "Invalid credentials"});
@@ -374,11 +377,11 @@ route.get('/users_achievements', (req, res) => {
     
 });
 
-route.get('/user_achievement/:id', (req, res) => {
+route.get('/user_achievement/:userId/:achievementId', (req, res) => {
     Users.findOne({ where: { id: req.user.userId } })
     .then( usr => {
         if (usr.permission === "admin") {
-    User_Achievement.findOne({ where: { id: req.params.id }, include:[ Users, Achievement] })
+    User_Achievement.findOne({ where: { userId: req.params.userId, achievementId: req.params.achievementId } })
         .then( rows => res.json(rows) )
         .catch( err => res.status(500).json(err) );} else {
             res.status(403).json({ msg: "Invalid credentials"});
@@ -392,7 +395,7 @@ route.post('/user_achievement', (req, res) => {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
-    User_Achievement.create({ userId: req.body.userId, achievementId: req.body.achievementId })
+    User_Achievement.create({ userId: req.body.userId, achievementId: req.body.achievementId, finished: req.body.finished })
         .then( rows => res.json(rows) )
         .catch( err => res.status(500).json(err) );} else {
             res.status(403).json({ msg: "Invalid credentials"});
@@ -402,14 +405,15 @@ route.post('/user_achievement', (req, res) => {
 
 });
 
-route.put('/user_achievement/:id', (req, res) => {
+route.put('/user_achievement/:userId/:achievementId', (req, res) => {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
-    User_Achievement.findOne({ where: { id: req.params.id } })
+    User_Achievement.findOne({ where: { userId: req.params.userId, achievementId: req.params.achievementId  } })
         .then( usr => {
             usr.userId = req.body.userId;
             usr.achievementId = req.body.achievementId;
+            usr.finished= req.body.finished
             usr.save()
                 .then( rows => res.json(rows) )
                 .catch( err => res.status(500).json(err) );
@@ -422,11 +426,12 @@ route.put('/user_achievement/:id', (req, res) => {
 
 });
 
-route.delete('/user_achievement/:id', (req, res) => {
+route.delete('/user_achievement/:userId/:achievementId', (req, res) => {
     Users.findOne({ where: { id: req.user.userId } })
     .then( usr => {
         if (usr.permission === "admin") {
-    User_Achievement.findOne({ where: { id: req.params.id } })
+            
+    User_Achievement.findOne({ where: {  userId: req.params.userId, achievementId: req.params.achievementId } })
         .then( usr => {
             usr.destroy()
                 .then( rows => res.json(rows) )

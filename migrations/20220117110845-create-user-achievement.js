@@ -8,16 +8,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        
-      },
-      achievementId: {
-        type: Sequelize.INTEGER,
-        
-      },
       finished: {
-        type: Sequelize.BOOLEAN,
+        type:Sequelize.BOOLEAN,
         allowNull: false,
       },
       createdAt: {

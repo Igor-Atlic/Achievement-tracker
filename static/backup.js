@@ -14,17 +14,17 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User_Achievement.init({
-    finished: {
-      type:DataTypes.BOOLEAN,
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    userId: {
-      type:DataTypes.INTEGER,
-      
-    },
     achievementId: {
-      type:DataTypes.INTEGER,
-      
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    finished: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false
     }
   }, {
     sequelize,
