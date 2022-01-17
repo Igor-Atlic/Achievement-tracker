@@ -2,12 +2,34 @@ const { sequelize, Users, Comment,Game, Achievement,User_Achievement } = require
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const Joi = require('joi');
 
 require('dotenv').config();
 
 const route = express.Router();
 route.use(express.json());
 route.use(express.urlencoded({ extended: true }));
+
+const sema = Joi.object().keys({
+    username: Joi.string().trim().min(3).max(24).required(),
+    password: Joi.string().required(),
+    email: Joi.string().required(),
+    permission: Joi.string().required()
+});
+
+const sema1 = Joi.object().keys({
+    name: Joi.string().trim().min(3).max(52).required(),
+    text: Joi.string().required().max(2048),
+    gameId:Joi.number().required()
+
+});
+
+const sema2 = Joi.object().keys({
+    name: Joi.string().trim().min(3).max(52).required(),
+    userId:Joi.number().required()
+
+});
+
 
 function authToken(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -70,9 +92,15 @@ route.get('/user/:id', (req, res) => {
 });
 
 route.post('/user', (req, res) => {
+    
+    let {error} = sema.validate(req.body);
+    if (error)
+        res.status(400).send(error.details[0].message);
+    else {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
+                
     Users.create({ username: req.body.username, email: req.body.email, password: bcrypt.hashSync(req.body.password, 10), permission: req.body.permission })
         .then( rows => res.json(rows) )
         .catch( err => res.status(500).json(err) );} else {
@@ -81,9 +109,13 @@ route.post('/user', (req, res) => {
     })
     .catch( err => res.status(500).json(err) );
 
-});
+}});
 
 route.put('/user/:id', (req, res) => {
+    let {error} = sema.validate(req.body);
+    if (error)
+        res.status(400).send(error.details[0].message);
+    else {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
@@ -101,11 +133,12 @@ route.put('/user/:id', (req, res) => {
             res.status(403).json({ msg: "Invalid credentials"});
         }
     })
-    .catch( err => res.status(500).json(err) );
+    .catch( err => res.status(500).json(err) );}
 
 });
 
 route.delete('/user/:id', (req, res) => {
+    
     Users.findOne({ where: { id: req.user.userId } })
     .then( usr => {
         if (usr.permission === "admin") {
@@ -151,20 +184,28 @@ route.get('/achievement/:id', (req, res) => {
 });
 
 route.post('/achievement', (req, res) => {
+    let {error} = sema1.validate(req.body);
+    if (error)
+        res.status(400).send(error.details[0].message);
+    else {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
-    Achievement.create({ name: req.body.name, text: req.body.text, finished: req.body.finished, gameId:req.body.gameId })
+    Achievement.create({ name: req.body.name, text: req.body.text,gameId:req.body.gameId })
         .then( rows => res.json(rows) )
         .catch( err => res.status(500).json(err) );} else {
             res.status(403).json({ msg: "Invalid credentials"});
         }
     })
-    .catch( err => res.status(500).json(err) );
+    .catch( err => res.status(500).json(err) );}
 
 });
 
 route.put('/achievement/:id', (req, res) => {
+    let {error} = sema1.validate(req.body);
+    if (error)
+        res.status(400).send(error.details[0].message);
+    else {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
@@ -172,7 +213,6 @@ route.put('/achievement/:id', (req, res) => {
         .then( ach => {
             ach.name = req.body.name;
             ach.text = req.body.text;
-            ach.finished = req.body.finished;
             ach.gameId = req.body.gameId
             ach.save()
                 .then( rows => res.json(rows) )
@@ -182,7 +222,7 @@ route.put('/achievement/:id', (req, res) => {
             res.status(403).json({ msg: "Invalid credentials"});
         }
     })
-    .catch( err => res.status(500).json(err) );
+    .catch( err => res.status(500).json(err) );}
 
 });
 
@@ -232,6 +272,10 @@ route.get('/game/:id', (req, res) => {
 });
 
 route.post('/game', (req, res) => {
+    let {error} = sema2.validate(req.body);
+    if (error)
+        res.status(400).send(error.details[0].message);
+    else {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
@@ -241,11 +285,15 @@ route.post('/game', (req, res) => {
             res.status(403).json({ msg: "Invalid credentials"});
         }
     })
-    .catch( err => res.status(500).json(err) );
+    .catch( err => res.status(500).json(err) );}
 
 });
 
 route.put('/game/:id', (req, res) => {
+    let {error} = sema2.validate(req.body);
+    if (error)
+        res.status(400).send(error.details[0].message);
+    else {
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
@@ -261,7 +309,7 @@ route.put('/game/:id', (req, res) => {
             res.status(403).json({ msg: "Invalid credentials"});
         }
     })
-    .catch( err => res.status(500).json(err) );
+    .catch( err => res.status(500).json(err) );}
 
 });
 
@@ -311,6 +359,7 @@ route.get('/comment/:id', (req, res) => {
 });
 
 route.post('/comment', (req, res) => {
+    
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
@@ -325,6 +374,7 @@ route.post('/comment', (req, res) => {
 });
 
 route.put('/comment/:id', (req, res) => {
+    
     Users.findOne({ where: { id: req.user.userId } })
         .then( usr => {
             if (usr.permission === "admin") {
